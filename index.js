@@ -39,9 +39,9 @@ server.route({
   path: '/user/{id}',
   handler: function (request, reply) {
       const user = users
-        .find({ id: req.payload.id })
-        .value()
-        
+        .find({ id: parseInt(request.params.id) })
+        .value();
+      
       return reply(user).code(200);
   }
 });
@@ -61,6 +61,19 @@ server.route({
     users.remove({ id: parseInt(request.params.id) }).value();
     
     return reply({ deleted: true }).code(200);
+  }
+})
+
+server.route({
+  method: 'PUT',
+  path: '/user/{id}',
+  handler: (request, reply) => {
+    const user = users
+      .find({id: parseInt(request.params.id)})
+      .assign(request.payload)
+      .value();
+      
+    return reply(user).code(200);
   }
 })
 
