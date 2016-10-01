@@ -77,6 +77,40 @@ server.route({
   }
 })
 
+server.route({
+  method: 'POST',
+  path: '/login',
+  handler: (request, reply) => {
+    const user = users
+      .find({ username: request.payload.firstname, password: request.payload.lastname })
+      .value();
+      
+    const response = user ? { login: true, user } : { login: false };
+    
+    return reply(response).code(200);
+  }
+})
+
+server.route({
+  method: 'POST',
+  path: '/signup',
+  handler: (request, reply) => {
+    let newUser;
+    const usernameTaken = users
+      .find({ username: request.payload.username })
+      .value();
+      
+    if (!usernameTaken) {
+      request.payload.id = Date.now();
+      newUser = users.push(request.payload).last().value();
+
+      return reply({ usernameTaken: false, newUser }).code(200);
+    } else {
+      return reply({ usernameTaken: true }).code(200);
+    }
+  }
+})
+
 server.start((err) => {
 
     if (err) {
