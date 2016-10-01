@@ -116,12 +116,22 @@ server.route({
   method: 'POST',
   path: '/uploadimage',
   handler: (request, reply) => {
-    request.payload.id = Date.now();
+    const imageData = JSON.parse(request.payload);
+    imageData.id = Date.now();
+
     const image = images
-      .push(request.payload)
+      .push(imageData)
       .value();
       
     return reply(image).code(200);
+  }
+})
+
+server.route({
+  method: 'GET',
+  path: '/images',
+  handler: (request, reply) => {
+    return reply(images.value()).code(200);
   }
 })
 
