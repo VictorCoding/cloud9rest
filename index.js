@@ -8,10 +8,11 @@ const db = low('db.json', {
 });
 const server = new Hapi.Server();
 
-db.defaults({ users: [] })
+db.defaults({ users: [], images: [] })
   .value()
   
 const users = db.get('users');
+const images = db.get('images');
 
 server.connection({ port: 3002 });
 
@@ -108,6 +109,19 @@ server.route({
     } else {
       return reply({ usernameTaken: true }).code(200);
     }
+  }
+})
+
+server.route({
+  method: 'POST',
+  path: '/uploadimage',
+  handler: (request, reply) => {
+    request.payload.id = Date.now();
+    const image = images
+      .push(request.payload)
+      .value();
+      
+    return reply(image).code(200);
   }
 })
 
